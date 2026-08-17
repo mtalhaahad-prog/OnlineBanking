@@ -1,0 +1,110 @@
+﻿@model IEnumerable<OnlineBanking.Models.BankAccount>
+
+@{
+    ViewBag.Title = "Bank Accounts";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+
+    var currentUser = ViewBag.CurrentUser as OnlineBanking.Models.User;
+}
+
+<div class="sidebar-space"></div>
+
+<div class="content">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h2><i class="fas fa-credit-card"></i> Bank Accounts</h2>
+        <p>View and manage all your accounts</p>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        You have <strong>@(Model?.Count() ?? 0) account(s)</strong> with us.
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        foreach (var acc in Model)
+        {
+            <div class="table-container" style="margin-top: 1.5rem;">
+                <h3>@(acc.AccountType) Account</h3>
+
+                <div class="account-card">
+                    <div class="account-card-header">
+                        <div>
+                            <div class="account-card-type">@(acc.AccountType?.ToUpper())</div>
+                            <div class="account-card-number">@acc.AccountNumber</div>
+                        </div>
+                        <div>
+                            <i class="fas fa-credit-card" style="font-size: 2.5rem;"></i>
+                        </div>
+                    </div>
+                    <div class="account-card-footer">
+                        <div>
+                            <div class="account-card-holder">@(currentUser?.FirstName) @(currentUser?.LastName)</div>
+                            <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.3rem;">
+                                Account Status:
+                                @if (acc.AccountStatus == "Active")
+                                {
+                                    <span style="color: #34D399;">✓ Active</span>
+                                }
+                                else
+                                {
+                                    <span style="color: #F87171;">@acc.AccountStatus</span>
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            <div class="account-card-balance">@acc.Currency @(acc.CurrentBalance.ToString("N0"))</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Details -->
+                <div style="background: white; padding: 1.5rem; border-radius: 12px; margin-top: 1rem;">
+                    <h4 style="color: #047857; margin-bottom: 1.5rem; font-weight: 700;">Account Details</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <div style="color: #6B7280; font-size: 0.9rem; margin-bottom: 0.3rem;">Account Number</div>
+                            <div style="color: #111827; font-weight: 600; font-size: 1.1rem;">@acc.AccountNumber</div>
+                        </div>
+                        <div>
+                            <div style="color: #6B7280; font-size: 0.9rem; margin-bottom: 0.3rem;">IBAN</div>
+                            <div style="color: #111827; font-weight: 600; font-size: 1.1rem;">@acc.IBAN</div>
+                        </div>
+                        <div>
+                            <div style="color: #6B7280; font-size: 0.9rem; margin-bottom: 0.3rem;">Account Type</div>
+                            <div style="color: #047857; font-weight: 600; font-size: 1.1rem;">@(acc.AccountType) Account</div>
+                        </div>
+                        <div>
+                            <div style="color: #6B7280; font-size: 0.9rem; margin-bottom: 0.3rem;">Available Balance</div>
+                            <div style="color: #111827; font-weight: 600; font-size: 1.1rem;">@acc.Currency @(acc.AvailableBalance.ToString("N0"))</div>
+                        </div>
+                        <div>
+                            <div style="color: #6B7280; font-size: 0.9rem; margin-bottom: 0.3rem;">Opening Date</div>
+                            <div style="color: #111827; font-weight: 600; font-size: 1.1rem;">@(acc.OpenDate?.ToString("MMM dd, yyyy") ?? "-")</div>
+                        </div>
+                        <div>
+                            <div style="color: #6B7280; font-size: 0.9rem; margin-bottom: 0.3rem;">Status</div>
+                            <div>
+                                @{
+                                    var accStatusClass = acc.AccountStatus == "Active" ? "status-success"
+                                        : acc.AccountStatus == "Frozen" ? "status-failed"
+                                        : "status-pending";
+                                }
+                                <span class="status-badge @accStatusClass">@acc.AccountStatus</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="table-container">
+            <p class="text-center">No bank accounts found.</p>
+        </div>
+    }
+
+</div>

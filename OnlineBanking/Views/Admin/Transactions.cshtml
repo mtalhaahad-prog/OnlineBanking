@@ -1,0 +1,87 @@
+﻿@model IEnumerable<OnlineBanking.Models.Transaction>
+
+@{
+    ViewBag.Title = "Transactions";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="sidebar-space"></div>
+<div class="content">
+    <div class="dashboard-header">
+        <h2><i class="fas fa-exchange-alt"></i> Transactions</h2>
+        <p>All banking transactions</p>
+    </div>
+
+    <div class="table-container">
+        <h3>Transaction History</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date & Time</th>
+                    <th>From</th>
+                    <th>From Account</th>
+                    <th>To</th>
+                    <th>To Account</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    int rowNumber = 1;
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@rowNumber</td>
+                            <td>@(item.TransactionDate?.ToString("MMM dd, yyyy hh:mm tt") ?? "-")</td>
+                            <td>
+                                @if (item.BankAccount?.User != null)
+                                {
+                                    @(item.BankAccount.User.FirstName + " " + item.BankAccount.User.LastName)
+                                }
+                                else
+                                {
+                                    @:Admin
+                                }
+                            </td>
+                            <td>@(item.BankAccount?.AccountNumber ?? "-")</td>
+                            <td>
+                                @if (item.BankAccount1?.User != null)
+                                {
+                                    @(item.BankAccount1.User.FirstName + " " + item.BankAccount1.User.LastName)
+                                }
+                                else
+                                {
+                                    @:-
+                                }
+                            </td>
+                            <td>@(item.BankAccount1?.AccountNumber ?? "-")</td>
+                            <td>@item.TransactionType</td>
+                            <td>@item.Amount.ToString("N2") @item.Currency</td>
+                            <td>@(string.IsNullOrEmpty(item.Description) ? "-" : item.Description)</td>
+                            <td>
+                                @{
+                                    var txStatusClass = item.TransactionStatus == "Completed" ? "status-success"
+                                        : item.TransactionStatus == "Failed" ? "status-failed"
+                                        : "status-pending";
+                                }
+                                <span class="status-badge @txStatusClass">@item.TransactionStatus</span>
+                            </td>
+                        </tr>
+                        rowNumber++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="10" class="text-center">No transactions found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

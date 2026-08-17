@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = "Order Cheque";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+
+    var myAccounts = ViewBag.MyAccounts as List<OnlineBanking.Models.BankAccount>;
+}
+
+<div class="sidebar-space"></div>
+
+<div class="content">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h2><i class="fas fa-book"></i> Order Cheque</h2>
+        <p>Request a new cheque book</p>
+    </div>
+
+    @if (TempData["ChequeSuccess"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> @TempData["ChequeSuccess"]
+        </div>
+    }
+    @if (TempData["ChequeError"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> @TempData["ChequeError"]
+        </div>
+    }
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Cheque books are delivered within 5-7 business days
+    </div>
+
+    <div class="form-card">
+        <h4>Cheque Book Request</h4>
+        <form method="post" action="@Url.Action("Cheque","Users")">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label class="form-label">Account *</label>
+                <select class="form-select" name="accountId" required>
+                    <option value="">-- Select --</option>
+                    @if (myAccounts != null)
+                    {
+                        foreach (var acc in myAccounts)
+                        {
+                            <option value="@acc.AccountID">@acc.AccountType (@acc.AccountNumber)</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Number of Leaves *</label>
+                <select class="form-select" name="leaves" required>
+                    <option value="25">25 leaves</option>
+                    <option value="50">50 leaves</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Delivery Address (Optional)</label>
+                <textarea class="form-control" name="deliveryAddress" rows="2" placeholder="Leave blank to use address on file"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary-gold">
+                <i class="fas fa-check"></i> Submit Request
+            </button>
+        </form>
+    </div>
+</div>

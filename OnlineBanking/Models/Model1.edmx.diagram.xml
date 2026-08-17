@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="c41ba5f83175451ca83d8a46b4c1df3f" Name="Diagram1">
+        <EntityTypeShape EntityType="OnlineBankingDBModel.AuditLog" Width="1.5" PointX="3" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="OnlineBankingDBModel.BankAccount" Width="1.5" PointX="3" PointY="9.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="OnlineBankingDBModel.BankStatement" Width="1.5" PointX="5.25" PointY="7.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="OnlineBankingDBModel.Beneficiary" Width="1.5" PointX="3" PointY="15.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="OnlineBankingDBModel.LoginAttempt" Width="1.5" PointX="3" PointY="19.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="OnlineBankingDBModel.ServiceRequest" Width="1.5" PointX="5.25" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="OnlineBankingDBModel.SupportTicket" Width="1.5" PointX="3" PointY="22.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="OnlineBankingDBModel.Transaction" Width="1.5" PointX="5.25" PointY="17" IsExpanded="true" />
+        <EntityTypeShape EntityType="OnlineBankingDBModel.User" Width="1.5" PointX="0.75" PointY="12.125" IsExpanded="true" />
+        <AssociationConnector Association="OnlineBankingDBModel.FK_AuditLog_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="OnlineBankingDBModel.FK_BankAccounts_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="OnlineBankingDBModel.FK_BankStatements_Accounts" ManuallyRouted="false" />
+        <AssociationConnector Association="OnlineBankingDBModel.FK_ServiceRequests_Accounts" ManuallyRouted="false" />
+        <AssociationConnector Association="OnlineBankingDBModel.FK_Transactions_FromAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="OnlineBankingDBModel.FK_Transactions_ToAccount" ManuallyRouted="false" />
+        <AssociationConnector Association="OnlineBankingDBModel.FK_Beneficiaries_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="OnlineBankingDBModel.FK_LoginAttempts_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="OnlineBankingDBModel.FK_ServiceRequests_ApprovedBy" ManuallyRouted="false" />
+        <AssociationConnector Association="OnlineBankingDBModel.FK_ServiceRequests_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="OnlineBankingDBModel.FK_SupportTickets_AssignedTo" ManuallyRouted="false" />
+        <AssociationConnector Association="OnlineBankingDBModel.FK_SupportTickets_Users" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

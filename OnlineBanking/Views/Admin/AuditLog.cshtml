@@ -1,0 +1,77 @@
+﻿@model IEnumerable<OnlineBanking.Models.AuditLog>
+
+@{
+    ViewBag.Title = "Audit Logs";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="sidebar-space"></div>
+<div class="content">
+    <div class="dashboard-header">
+        <h2><i class="fas fa-file-alt"></i> Audit Log</h2>
+        <p>System activity and change history</p>
+    </div>
+    <div class="table-container">
+        <h3>Recent Activity</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>Entity ID</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    int rowNumber = 1;
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@rowNumber</td>
+                            <td>
+                                @if (item.User != null)
+                                {
+                                    @(item.User.FirstName + " " + item.User.LastName)
+                                }
+                                else
+                                {
+                                    @:System
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    var actionClass = "status-success";
+                                    var action = item.Action ?? "";
+
+                                    if (action == "Delete" || action.Contains("Failed") || action == "Account Locked" || action == "Freeze" || action == "Reject")
+                                    {
+                                        actionClass = "status-failed";
+                                    }
+                                    else if (action == "Update" || action == "Password Change" || action == "Deactivate")
+                                    {
+                                        actionClass = "status-pending";
+                                    }
+                                }
+                                <span class="status-badge @actionClass">@item.Action</span>
+                            </td>
+                            <td>@item.EntityType</td>
+                            <td>@(item.EntityID?.ToString() ?? "-")</td>
+                            <td>@(item.CreatedDate?.ToString("MMM dd, yyyy hh:mm tt") ?? "-")</td>
+                        </tr>
+                        rowNumber++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center">No audit logs found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

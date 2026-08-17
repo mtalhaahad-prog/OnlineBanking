@@ -1,0 +1,14 @@
+﻿@{
+    int count = (int)ViewBag.Count;
+}
+
+<a href="@Url.Action("Users","Admin")" class="navbar-item" title="Pending Accounts" style="position: relative;">
+    <i class="fas fa-bell"></i>
+    @if (count > 0)
+    {
+        <span style="position: absolute; top: -9px; right: -12px; background: #DC2626; color: white;
+                        font-size: 0.7rem; font-weight: 700; border-radius: 50%; width: 18px;
+                        height: 18px; display: flex;align-items: center; justify-content: center;">@count
+        </span>
+    }
+</a>

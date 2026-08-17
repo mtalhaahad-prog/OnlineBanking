@@ -1,0 +1,139 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="sidebar-space"></div>
+
+<div class="content">
+    <div class="dashboard-header">
+        <h2>Admin Dashboard</h2>
+        <p>System overview and key metrics</p>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value">@ViewBag.TotalUsers</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-inbox"></i></div>
+            <div class="stat-label">Pending Requests</div>
+            <div class="stat-value">@ViewBag.PendingRequestsCount</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-exchange-alt"></i></div>
+            <div class="stat-label">Today's Transactions</div>
+            <div class="stat-value">@ViewBag.TodaysTransactions</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-server"></i></div>
+            <div class="stat-label">System Status</div>
+            <div class="stat-value" style="color: #34D399;">Online</div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="table-container">
+        <h3>Recent Transactions</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.RecentTransactions != null && ViewBag.RecentTransactions.Count > 0)
+                {
+                    foreach (var item in ViewBag.RecentTransactions)
+                    {
+                        <tr>
+                            <td>@(item.BankAccount?.AccountNumber ?? "Cash deposit by admin")</td>
+                            <td>@(item.BankAccount1?.AccountNumber ?? "-")</td>
+                            <td>@item.TransactionType</td>
+                            <td>@(((decimal)item.Amount).ToString("N2")) @item.Currency</td>
+                            <td>
+                                @{
+                                    var txClass = item.TransactionStatus == "Completed" ? "status-success"
+                                        : item.TransactionStatus == "Failed" ? "status-failed"
+                                        : "status-pending";
+                                }
+                                <span class="status-badge @txClass">@item.TransactionStatus</span>
+                            </td>
+                            <td>@(item.TransactionDate?.ToString("MMM dd, yyyy") ?? "-")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="6" class="text-center">No recent transactions.</td></tr>
+                }
+            </tbody>
+        </table>
+        <div class="text-end mt-2">
+            <a href="@Url.Action("Transactions", "Admin")" class="btn btn-small btn-secondary-outline">View All Transactions</a>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="table-container">
+        <h3>Recent Activity</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.RecentActivity != null && ViewBag.RecentActivity.Count > 0)
+                {
+                    foreach (var item in ViewBag.RecentActivity)
+                    {
+                        <tr>
+                            <td>@(item.CreatedDate?.ToString("MMM dd, hh:mm tt") ?? "-")</td>
+                            <td>
+                                @if (item.User != null)
+                                {
+                                    @(item.User.FirstName) @(item.User.LastName)
+                                }
+                                else
+                                {
+                                    @:System
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    var actionClass = item.Action == "Delete" ? "status-failed"
+                                        : item.Action == "Update" ? "status-pending"
+                                        : "status-success";
+                                }
+                                <span class="status-badge @actionClass">@item.Action</span>
+                            </td>
+                            <td>@item.EntityType</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" class="text-center">No recent activity.</td></tr>
+                }
+            </tbody>
+        </table>
+        <div class="text-end mt-2">
+            <a href="@Url.Action("AuditLog", "Admin")" class="btn btn-small btn-secondary-outline">View All Activity</a>
+        </div>
+    </div>
+</div>

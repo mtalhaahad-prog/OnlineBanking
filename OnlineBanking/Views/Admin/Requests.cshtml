@@ -1,0 +1,109 @@
+﻿@model IEnumerable<OnlineBanking.Models.ServiceRequest>
+
+@{
+    ViewBag.Title = "Requests";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="sidebar-space"></div>
+<div class="content">
+    <div class="dashboard-header">
+        <h2><i class="fas fa-inbox"></i> Requests</h2>
+        <p>All pending user requests</p>
+    </div>
+
+    <div class="table-container">
+        <h3>Pending Requests</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Priority</th>
+                    <th>Date</th>
+                    <th>Details</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    int rowNumber = 1;
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@rowNumber</td>
+                            <td>@(item.User1?.FirstName) @(item.User1?.LastName)</td>
+                            <td>@item.RequestType</td>
+                            <td>
+                                @{
+                                    var priorityClass = item.Priority == "High" ? "status-failed"
+                                        : item.Priority == "Low" ? "status-pending"
+                                        : "status-success";
+                                }
+                                <span class="status-badge @priorityClass">@item.Priority</span>
+                            </td>
+                            <td>@(item.CreatedDate?.ToString("MMM dd") ?? "-")</td>
+                            <td>
+                                @switch (item.RequestType)
+                                {
+                                    case "Cheque Book":
+                                        @: @item.ChequeNumber leaves
+                                        break;
+                                    case "Stop Payment":
+                                        @: Cheque #@item.ChequeNumber
+                                        break;
+                                    case "Address Change":
+                                        @: @item.NewAddress, @item.NewCity
+                                        break;
+                                    case "Email Change":
+                                        @: @item.NewAddress
+                                        break;
+                                    default:
+                                        @: -
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                <button class="btn btn-small btn-success"
+                                        onclick="updateStatus('@item.RequestID','Approved')">
+                                    ✓ Approve
+                                </button>
+                                <button class="btn btn-small btn-danger"
+                                        onclick="updateStatus('@item.RequestID','Rejected')">
+                                    ✕ Reject
+                                </button>
+                            </td>
+                        </tr>
+                        rowNumber++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">No pending requests.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <form id="statusForm" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="statusRequestId" />
+            <input type="hidden" name="newStatus" id="statusNewStatus" />
+        </form>
+
+        <script>
+            function updateStatus(id, status) {
+                if (confirm("Mark this request as " + status + "?")) {
+                    document.getElementById('statusRequestId').value = id;
+                    document.getElementById('statusNewStatus').value = status;
+                    var form = document.getElementById('statusForm');
+                    form.action = '@Url.Action("UpdateRequestStatus", "Admin")';
+                    form.submit();
+                }
+            }
+        </script>
+    </div>
+</div>

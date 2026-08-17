@@ -1,0 +1,110 @@
+﻿@model IEnumerable<OnlineBanking.Models.SupportTicket>
+
+@{
+    ViewBag.Title = "Contact Us";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="sidebar-space"></div>
+
+<div class="content">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h2><i class="fas fa-headset"></i> Contact Us</h2>
+        <p>Get help and support from our team</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-phone"></i></div>
+            <div class="stat-label">Phone Support</div>
+            <div style="color: #047857; font-weight: 600;">021-1234567</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+            <div class="stat-label">Email</div>
+            <div style="color: #047857; font-weight: 600;">support@verdantvault.com</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-label">Hours</div>
+            <div style="color: #047857; font-weight: 600;">24/7 Available</div>
+        </div>
+    </div>
+
+    @if (TempData["SupportSuccess"] != null)
+    {
+        <div class="alert alert-success" style="margin-top: 1.5rem;">
+            <i class="fas fa-check-circle"></i> @TempData["SupportSuccess"]
+        </div>
+    }
+    @if (TempData["SupportError"] != null)
+    {
+        <div class="alert alert-danger" style="margin-top: 1.5rem;">
+            <i class="fas fa-exclamation-circle"></i> @TempData["SupportError"]
+        </div>
+    }
+
+    <div class="form-card" style="margin-top: 2rem;">
+        <h4>Send Us a Message</h4>
+        <form method="post" action="@Url.Action("Support","Users")">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label class="form-label">Subject *</label>
+                <input type="text" class="form-control" name="subject" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Message *</label>
+                <textarea class="form-control" name="message" rows="4" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary-gold">
+                <i class="fas fa-paper-plane"></i> Send Message
+            </button>
+        </form>
+    </div>
+
+    <!-- My Tickets -->
+    <div class="table-container" style="margin-top: 2rem;">
+        <h3>My Tickets</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Ticket #</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var ticket in Model)
+                    {
+                        <tr>
+                            <td>@ticket.TicketNumber</td>
+                            <td>@ticket.Subject</td>
+                            <td>@(ticket.CreatedDate?.ToString("MMM dd, yyyy") ?? "-")</td>
+                            <td>
+                                @{
+                                    var statusClass = ticket.Status == "Resolved" ? "status-success"
+                                        : ticket.Status == "Closed" ? "status-failed"
+                                        : "status-pending";
+                                }
+                                <span class="status-badge @statusClass">@ticket.Status</span>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center">No tickets submitted yet.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

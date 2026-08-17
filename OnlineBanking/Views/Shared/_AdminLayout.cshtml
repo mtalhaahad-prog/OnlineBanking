@@ -1,0 +1,208 @@
+﻿@{
+    Layout = null;
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link rel="icon" type="image/png" href="@Url.Content("~/assets/Img/Admin-Icon.png")" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    @*--  DARK THEME ---*@
+    <script>
+        if (localStorage.getItem('adminTheme') === 'dark') {
+            document.documentElement.classList.add('dark-theme-init');
+        }
+    </script>
+    <link rel="stylesheet" href="~/assets/style.css" />
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="navbar-brand">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <i class="fas fa-landmark"></i> VerdantVault ADMIN
+        </div>
+
+        <div class="navbar-menu">
+            <a href="@Url.Action("Index","Admin")" class="navbar-item">
+                <i class="fas fa-home"></i>
+                <span class="text-light">Dashboard</span>
+            </a>
+
+            <a href="@Url.Action("Support","Admin")" class="navbar-item">
+                <i class="fas fa-headset"></i>
+                <span class="text-light">Support</span>
+            </a>
+
+
+            @Html.Action("PendingUsersBadge", "Admin")
+               @*sahi kam nhi krha tha darkmode isliye hid krda*@
+            @*<button id="darkThemeToggle" class="dark-theme-toggle" title="Toggle dark mode">
+                <i class="fas fa-moon" id="darkThemeIcon"></i>
+            </button>*@
+
+            <a href="@Url.Action("Logout","Account")"
+               class="navbar-item"
+               onclick="return confirm('Are you sure you want to logout?');">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="text-light">Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-container">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+
+            <div class="sidebar-header">
+                <i class="fas fa-shield-alt"></i> Admin Panel
+            </div>
+
+            <ul class="sidebar-menu">
+
+                <li>
+                    <a href="@Url.Action("Index","Admin")"
+                       class="@(currentAction == "Index" ? "active" : "")">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("Users","Admin")"
+                       class="@(currentAction == "Users" ? "active" : "")">
+                        <i class="fas fa-users"></i> Users
+                    </a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("Accounts", "Admin")">
+                    <i class="fas fa-credit-card"></i> Bank Accounts</a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("Requests","Admin")"
+                       class="@(currentAction == "Requests" ? "active" : "")">
+                        <i class="fas fa-inbox"></i> Requests
+                    </a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("Approvals","Admin")"
+                       class="@(currentAction == "Approvals" ? "active" : "")">
+                        <i class="fas fa-check-circle"></i> Approvals
+                    </a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("Transactions","Admin")"
+                       class="@(currentAction == "Transactions" ? "active" : "")">
+                        <i class="fas fa-exchange-alt"></i> Transactions
+                    </a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("Reports","Admin")"
+                       class="@(currentAction == "Reports" ? "active" : "")">
+                        <i class="fas fa-chart-bar"></i> Reports
+                    </a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("AuditLog","Admin")"
+                       class="@(currentAction == "AuditLog" ? "active" : "")">
+                        <i class="fas fa-file-alt"></i> Audit Log
+                    </a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("Support","Admin")"
+                       class="@(currentAction == "Support" ? "active" : "")">
+                        <i class="fas fa-headset"></i> Support
+                    </a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("Logout","Account")"
+                       onclick="return confirm('Are you sure you want to logout?');">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+        <!-- PAGE CONTENT -->
+        @RenderBody()
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>&copy; 2026 VerdantVault. All rights reserved.</p>
+        <p>Secure Online Banking System | www.verdantvault.com</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const sidebarToggle = document.getElementById("sidebarToggle");
+        const sidebar = document.getElementById("sidebar");
+
+        if (sidebarToggle && sidebar) {
+
+            sidebarToggle.addEventListener("click", function (e) {
+                e.stopPropagation();
+                sidebar.classList.toggle("active");
+            });
+
+            document.addEventListener("click", function (e) {
+                if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                    sidebar.classList.remove("active");
+                }
+            });
+
+            sidebar.querySelectorAll("a").forEach(function (link) {
+                link.addEventListener("click", function () {
+                    sidebar.classList.remove("active");
+                });
+            });
+
+        }
+
+
+        // DARK THEME TOGGLE
+        const darkThemeToggle = document.getElementById("darkThemeToggle");
+        const darkThemeIcon = document.getElementById("darkThemeIcon");
+
+        function applyTheme(isDark) {
+            document.body.classList.toggle("dark-theme", isDark);
+            if (darkThemeIcon) {
+                darkThemeIcon.className = isDark ? "fas fa-sun" : "fas fa-moon";
+            }
+        }
+
+        const savedTheme = localStorage.getItem("adminTheme");
+        applyTheme(savedTheme === "dark");
+
+        if (darkThemeToggle) {
+            darkThemeToggle.addEventListener("click", function () {
+                const isDark = !document.body.classList.contains("dark-theme");
+                applyTheme(isDark);
+                localStorage.setItem("adminTheme", isDark ? "dark" : "light");
+            });
+        }
+    </script>
+
+</body>
+</html>

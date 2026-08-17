@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "Reports";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="sidebar-space"></div>
+<div class="content">
+    <div class="dashboard-header">
+        <h2><i class="fas fa-chart-bar"></i> Reports</h2>
+        <p>System-wide summary and analytics</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value">@ViewBag.TotalUsers</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+            <div class="stat-label">Total Accounts</div>
+            <div class="stat-value">@ViewBag.TotalAccounts</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-coins"></i></div>
+            <div class="stat-label">Total Balance</div>
+            <div class="stat-value">@(((decimal)ViewBag.TotalBalance).ToString("N0")) PKR</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-exchange-alt"></i></div>
+            <div class="stat-label">Total Transactions</div>
+            <div class="stat-value">@ViewBag.TotalTransactions</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-inbox"></i></div>
+            <div class="stat-label">Pending Requests</div>
+            <div class="stat-value">@ViewBag.PendingRequests</div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <h3>Transactions by Type</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Count</th>
+                    <th>Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.TransactionsByType != null && ViewBag.TransactionsByType.Count > 0)
+                {
+                    foreach (var item in ViewBag.TransactionsByType)
+                    {
+                        <tr>
+                            <td>@item.Label</td>
+                            <td>@item.Count</td>
+                            <td>@(((decimal)item.Amount).ToString("N2")) PKR</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="3" class="text-center">No transaction data.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

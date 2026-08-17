@@ -1,0 +1,295 @@
+﻿@model IEnumerable<OnlineBanking.Models.User>
+
+@{
+    ViewBag.Title = "Users";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var pendingUsers = ViewBag.PendingUsers as List<OnlineBanking.Models.User>;
+}
+
+<div class="sidebar-space"></div>
+<div class="content">
+    <div class="dashboard-header">
+        <h2><i class="fas fa-users"></i> Users</h2>
+        <p>Manage all system users</p>
+    </div>
+
+    <!-- New Registrations (sirf tab dikhta hai jab koi Pending user ho) -->
+    @if (pendingUsers != null && pendingUsers.Any())
+    {
+        <div class="table-container">
+            <h3>New Registrations</h3>
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int pRow = 1;
+                    }
+                    @foreach (var item in pendingUsers)
+                    {
+                        <tr>
+                            <td>@pRow</td>
+                            <td>@item.FirstName @item.LastName</td>
+                            <td>@item.Email</td>
+                            <td>@item.PhoneNumber</td>
+                            <td><span class="status-badge status-pending">@item.AccountStatus</span></td>
+                            <td>@(item.CreatedDate?.ToString("MMM dd, yyyy") ?? "-")</td>
+                            <td>
+                                <div class="d-flex gap-2" style="white-space: nowrap;">
+                                    <button class="btn btn-small btn-success" onclick="approveUser('@item.UserID')">
+                                        Approve
+                                    </button>
+                                    <button class="btn btn-small btn-danger" onclick="rejectUser('@item.UserID')">
+                                        Reject
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        pRow++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <!-- All Users -->
+    <div class="table-container" style="margin-top: 2rem;">
+        <h3>All Users</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    int rowNumber = 1;
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@rowNumber</td>
+                            <td>@item.FirstName @item.LastName</td>
+                            <td>@item.Email</td>
+                            <td>@item.PhoneNumber</td>
+                            <td>
+                                @{
+                                    var statusClass = item.AccountStatus?.ToString() == "Active"
+                                        ? "status-success"
+                                        : "status-failed";
+                                }
+                                <span class="status-badge @statusClass">@item.AccountStatus</span>
+                            </td>
+                            <td>@(item.CreatedDate?.ToString("MMM dd, yyyy") ?? "-")</td>
+                            <td>
+                                <div class="d-flex gap-2" style="white-space: nowrap;">
+                                    <button class="btn btn-small btn-secondary-outline view-btn"
+                                            data-address="@item.Address"
+                                            data-city="@item.City"
+                                            data-postalcode="@item.PostalCode"
+                                            data-country="@item.Country"
+                                            data-dob="@(item.DateOfBirth?.ToString("MMM dd, yyyy") ?? "-")"
+                                            data-cnic="@item.CNIC"
+                                            data-usertype="@item.UserType"
+                                            data-failedlogins="@item.FailedLoginAttempts"
+                                            data-locked="@(item.IsAccountLocked == true ? "True" : "False")"
+                                            data-verified="@(item.IsEmailVerified == true ? "True" : "False")"
+                                            data-updated="@(item.UpdatedDate?.ToString("MMM dd, yyyy hh:mm tt") ?? "-")"
+                                            data-lastlogin="@(item.LastLoginDate?.ToString("MMM dd, yyyy hh:mm tt") ?? "-")"
+                                            data-name="@item.FirstName @item.LastName">
+                                        View More
+                                    </button>
+                                    <button class="btn btn-small btn-primary-gold"
+                                            onclick="openEdit('@item.UserID','@item.FirstName','@item.LastName','@item.Email','@item.PhoneNumber','@item.AccountStatus','@(item.IsAccountLocked == true ? "true" : "false")','@(item.IsEmailVerified == true ? "true" : "false")','@item.UserType')">
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-small btn-danger"
+                                            onclick="confirmDelete('@item.UserID','@item.FirstName @item.LastName')">
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        rowNumber++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">No users found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Approve/Reject form -->
+        <form id="statusForm" method="post">
+            @Html.AntiForgeryToken()
+        </form>
+
+        <!-- Delete form -->
+        <form id="deleteForm" method="post">
+            @Html.AntiForgeryToken()
+        </form>
+
+        <!-- Edit modal -->
+        <div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;">
+            <div style="background:#fff; max-width:460px; margin:80px auto; padding:20px; border-radius:8px; max-height:85vh; overflow-y:auto;">
+                <h3>Edit User</h3>
+                <form id="editForm" method="post" action="@Url.Action("EditUser","Admin")">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="UserID" id="editUserID" />
+
+                    <label>First Name</label>
+                    <input type="text" name="FirstName" id="editFirstName" class="form-control" />
+
+                    <label>Last Name</label>
+                    <input type="text" name="LastName" id="editLastName" class="form-control" />
+
+                    <label>Email</label>
+                    <input type="text" name="Email" id="editEmail" class="form-control" />
+
+                    <label>Phone</label>
+                    <input type="text" name="PhoneNumber" id="editPhone" class="form-control" />
+
+                    <label>Status</label>
+                    <select name="AccountStatus" id="editStatus" class="form-select mb-2">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Locked">Locked</option>
+                        <option value="Pending">Pending</option>
+                    </select>
+
+                    <label>Role</label>
+                    <select name="UserType" id="editUserType" class="form-select mb-2">
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+
+                    <label>Account Locked</label>
+                    <select name="IsAccountLocked" id="editLocked" class="form-select mb-2">
+                        <option value="false">False</option>
+                        <option value="true">True</option>
+                    </select>
+
+                    <label>Email Verified</label>
+                    <select name="IsEmailVerified" id="editVerified" class="form-select mb-2">
+                        <option value="false">False</option>
+                        <option value="true">True</option>
+                    </select>
+
+                    <br />
+                    <button type="submit" class="btn btn-primary-gold mb-3">Save</button>
+                    <button type="button" class="btn btn-secondary mb-3" onclick="closeEdit()">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- View Details modal -->
+        <div id="viewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;">
+            <div style="background:#fff; max-width:460px; margin:80px auto; padding:20px; border-radius:8px; max-height:85vh; overflow-y:auto;">
+                <h3 id="viewUserName">User Details</h3>
+                <hr />
+
+                <p><strong>Address:</strong> <span id="viewAddress"></span></p>
+                <p><strong>City:</strong> <span id="viewCity"></span></p>
+                <p><strong>Postal Code:</strong> <span id="viewPostalCode"></span></p>
+                <p><strong>Country:</strong> <span id="viewCountry"></span></p>
+                <p><strong>Date of Birth:</strong> <span id="viewDob"></span></p>
+                <p><strong>CNIC:</strong> <span id="viewCnic"></span></p>
+                <p><strong>User Type:</strong> <span id="viewUserType"></span></p>
+                <p><strong>Failed Login Attempts:</strong> <span id="viewFailedLogins"></span></p>
+                <p><strong>Account Locked:</strong> <span id="viewLocked"></span></p>
+                <p><strong>Email Verified:</strong> <span id="viewVerified"></span></p>
+                <p><strong>Last Login:</strong> <span id="viewLastLogin"></span></p>
+                <p><strong>Updated Date:</strong> <span id="viewUpdated"></span></p>
+
+                <br />
+                <button type="button" class="btn btn-secondary" onclick="closeView()">Close</button>
+            </div>
+        </div>
+
+        <script>
+            function openEdit(id, first, last, email, phone, status, locked, verified, userType) {
+                document.getElementById('editUserID').value = id;
+                document.getElementById('editFirstName').value = first;
+                document.getElementById('editLastName').value = last;
+                document.getElementById('editEmail').value = email;
+                document.getElementById('editPhone').value = phone;
+                document.getElementById('editStatus').value = status;
+                document.getElementById('editLocked').value = locked;
+                document.getElementById('editVerified').value = verified;
+                document.getElementById('editUserType').value = userType;
+                document.getElementById('editModal').style.display = 'block';
+            }
+
+            function closeEdit() {
+                document.getElementById('editModal').style.display = 'none';
+            }
+
+            function confirmDelete(id, name) {
+                if (confirm("Delete user '" + name + "'? This cannot be undone.")) {
+                    var form = document.getElementById('deleteForm');
+                    form.action = '@Url.Action("DeleteUser", "Admin")/' + id;
+                    form.submit();
+                }
+            }
+
+            function approveUser(id) {
+                if (confirm("Approve this user's account?")) {
+                    var form = document.getElementById('statusForm');
+                    form.action = '@Url.Action("ApproveUser", "Admin")/' + id;
+                    form.submit();
+                }
+            }
+
+            function rejectUser(id) {
+                if (confirm("Reject this registration?")) {
+                    var form = document.getElementById('statusForm');
+                    form.action = '@Url.Action("RejectUser", "Admin")/' + id;
+                    form.submit();
+                }
+            }
+
+            // VIEW MODAL
+            document.querySelectorAll('.view-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    document.getElementById('viewUserName').textContent = btn.dataset.name + " - Details";
+                    document.getElementById('viewAddress').textContent = btn.dataset.address || '-';
+                    document.getElementById('viewCity').textContent = btn.dataset.city || '-';
+                    document.getElementById('viewPostalCode').textContent = btn.dataset.postalcode || '-';
+                    document.getElementById('viewCountry').textContent = btn.dataset.country || '-';
+                    document.getElementById('viewDob').textContent = btn.dataset.dob || '-';
+                    document.getElementById('viewCnic').textContent = btn.dataset.cnic || '-';
+                    document.getElementById('viewUserType').textContent = btn.dataset.usertype || '-';
+                    document.getElementById('viewFailedLogins').textContent = btn.dataset.failedlogins || '0';
+                    document.getElementById('viewLocked').textContent = btn.dataset.locked || '-';
+                    document.getElementById('viewVerified').textContent = btn.dataset.verified || '-';
+                    document.getElementById('viewLastLogin').textContent = btn.dataset.lastlogin || '-';
+                    document.getElementById('viewUpdated').textContent = btn.dataset.updated || '-';
+                    document.getElementById('viewModal').style.display = 'block';
+                });
+            });
+
+            function closeView() {
+                document.getElementById('viewModal').style.display = 'none';
+            }
+        </script>
+    </div>
+</div>

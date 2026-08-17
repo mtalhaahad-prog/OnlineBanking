@@ -1,0 +1,96 @@
+﻿@model IEnumerable<OnlineBanking.Models.Transaction>
+
+@{
+    ViewBag.Title = "Activity";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    var myAccountIds = ViewBag.MyAccountIds as List<int>;
+}
+
+<div class="sidebar-space"></div>
+
+<div class="content">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h2><i class="fas fa-history"></i> Activity</h2>
+        <p>View your recent transactions and activities</p>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+        <h3>Recent Transactions</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>From</th>
+                    <th>From Account</th>
+                    <th>To</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var tx in Model)
+                    {
+                        bool isCredit = myAccountIds != null && myAccountIds.Contains(tx.ToAccountID ?? 0);
+
+                <tr>
+                    <td>@(tx.TransactionDate?.ToString("MMM dd, yyyy hh:mm tt") ?? "-")</td>
+                    <td>
+                        @if (tx.BankAccount?.User != null)
+                        {
+                            @(tx.BankAccount.User.FirstName + " " + tx.BankAccount.User.LastName)
+                        }
+                        else
+                        {
+                            @:Admin
+                        }
+                    </td>
+                    <td>@(tx.BankAccount?.AccountNumber ?? "-")</td>
+                    <td>
+                        @if (tx.BankAccount1?.User != null)
+                        {
+                            @(tx.BankAccount1.User.FirstName + " " + tx.BankAccount1.User.LastName)
+                        }
+                        else
+                        {
+                            @:-
+                        }
+                    </td>
+                    <td>@tx.Description</td>
+                    <td>
+                        @if (isCredit)
+                        {
+                            <i class="fas fa-arrow-up" style="color: #34D399;"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-arrow-down" style="color: #DC2626;"></i>
+                        }
+                    </td>
+                    <td>@tx.Currency @tx.Amount.ToString("N0")</td>
+                    <td>
+                        @{
+                            var txClass = tx.TransactionStatus == "Completed" ? "status-success"
+                                : tx.TransactionStatus == "Failed" ? "status-failed"
+                                : "status-pending";
+                        }
+                        <span class="status-badge @txClass">@tx.TransactionStatus</span>
+                    </td>
+                </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center">No transactions found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

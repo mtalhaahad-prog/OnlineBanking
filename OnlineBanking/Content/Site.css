@@ -1,0 +1,39 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+
+
+/* ===== Enhanced Dark Theme ===== */
+body.dark-theme{background:#0f172a;color:#f8fafc;}
+body.dark-theme .content{background:#162033;}
+body.dark-theme .card,
+body.dark-theme .stat-card,
+body.dark-theme .dashboard-card{background:#1e293b!important;color:#f8fafc!important;}
+body.dark-theme table,
+body.dark-theme .table{background:#263449!important;color:#f8fafc!important;}
+body.dark-theme .table th{background:#334155!important;color:#fff!important;}
+body.dark-theme .table td{background:#263449!important;color:#e5e7eb!important;}
+body.dark-theme input,
+body.dark-theme textarea,
+body.dark-theme select{
+background:#1f2937!important;
+color:#fff!important;
+border:1px solid #475569!important;
+}
+body.dark-theme input::placeholder,
+body.dark-theme textarea::placeholder{color:#cbd5e1!important;}

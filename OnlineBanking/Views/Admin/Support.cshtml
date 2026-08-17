@@ -1,0 +1,110 @@
+﻿@model IEnumerable<OnlineBanking.Models.SupportTicket>
+
+@{
+    ViewBag.Title = "Support";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="sidebar-space"></div>
+<div class="content">
+    <div class="dashboard-header">
+        <h2><i class="fas fa-headset"></i> Support</h2>
+        <p>Customer support tickets</p>
+    </div>
+
+    <div class="table-container">
+        <h3>Support Tickets</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Ticket #</th>
+                    <th>User</th>
+                    <th>Subject</th>
+                    <th>Category</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    int rowNumber = 1;
+                    foreach (var item in Model)
+                    {
+                <tr>
+                    <td>@rowNumber</td>
+                    <td>@item.TicketNumber</td>
+                    <td>@(item.User1?.FirstName) @(item.User1?.LastName)</td>
+                    <td>@item.Subject</td>
+                    <td>@item.Category</td>
+                    <td>
+                        @{
+                            var priorityClass = item.Priority == "High" ? "status-failed"
+                                : item.Priority == "Low" ? "status-pending"
+                                : "status-success";
+                        }
+                        <span class="status-badge @priorityClass">@item.Priority</span>
+                    </td>
+                    <td>
+                        @{
+                            var statusClass = item.Status == "Resolved" ? "status-success"
+                                : item.Status == "Closed" ? "status-failed"
+                                : "status-pending";
+                        }
+                        <span class="status-badge @statusClass">@item.Status</span>
+                    </td>
+                    <td>@(item.CreatedDate?.ToString("MMM dd, yyyy") ?? "-")</td>
+                    <td>
+                        @if (item.Status != "Resolved" && item.Status != "Closed")
+                        {
+                            <div class="d-flex gap-2" style="white-space: nowrap;">
+                                <button class="btn btn-small btn-primary-gold"
+                                        onclick="updateTicketStatus('@item.TicketID','Resolved')">
+                                    Resolve
+                                </button>
+                                <button class="btn btn-small btn-danger"
+                                        onclick="updateTicketStatus('@item.TicketID','Closed')">
+                                    Close
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </td>
+                </tr>
+                        rowNumber++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center">No support tickets found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <form id="ticketStatusForm" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="ticketId" />
+            <input type="hidden" name="newStatus" id="ticketNewStatus" />
+        </form>
+
+        <script>
+            function updateTicketStatus(id, status) {
+                if (confirm("Mark this ticket as " + status + "?")) {
+                    document.getElementById('ticketId').value = id;
+                    document.getElementById('ticketNewStatus').value = status;
+                    var form = document.getElementById('ticketStatusForm');
+                    form.action = '@Url.Action("UpdateTicketStatus", "Admin")';
+                    form.submit();
+                }
+            }
+        </script>
+    </div>
+</div>

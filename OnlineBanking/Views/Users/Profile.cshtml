@@ -1,0 +1,196 @@
+﻿@model OnlineBanking.Models.User
+
+@{
+    ViewBag.Title = "Settings";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="sidebar-space"></div>
+
+<div class="content">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h2><i class="fas fa-cog"></i> Settings</h2>
+        <p>Manage your account settings</p>
+    </div>
+
+    @if (TempData["ProfileSuccess"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> @TempData["ProfileSuccess"]
+        </div>
+    }
+    @if (TempData["ProfileError"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> @TempData["ProfileError"]
+        </div>
+    }
+    @if (TempData["PasswordSuccess"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> @TempData["PasswordSuccess"]
+        </div>
+    }
+    @if (TempData["PasswordError"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> @TempData["PasswordError"]
+        </div>
+    }
+
+    <!-- Profile Information -->
+    <div class="form-card">
+        <h4>Profile Information</h4>
+        <form method="post" action="@Url.Action("UpdateProfile","Users")">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label class="form-label">First Name *</label>
+                <input type="text" class="form-control" name="firstName" value="@Model.FirstName" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Last Name *</label>
+                <input type="text" class="form-control" name="lastName" value="@Model.LastName" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone *</label>
+                <input type="tel" class="form-control" name="phoneNumber" value="@Model.PhoneNumber" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email (Current)</label>
+                <input type="email" class="form-control" value="@Model.Email" readonly disabled>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Address (Current)</label>
+                <textarea class="form-control" readonly disabled>@Model.Address, @Model.City, @Model.Country</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary-gold">
+                <i class="fas fa-check"></i> Save Changes
+            </button>
+        </form>
+    </div>
+
+    <!-- Request Email/Address Change -->
+    <div class="form-card" style="margin-top: 2rem;">
+        <h4>Request Email or Address Change</h4>
+        <p style="color: #6B7280; font-size: 0.9rem;">Changes to your email or address require admin approval for security purposes.</p>
+
+        <form method="post" action="@Url.Action("RequestContactChange","Users")">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label class="form-label">Change Type *</label>
+                <select class="form-select" name="changeType" id="changeType" required onchange="toggleChangeFields(this.value)">
+                    <option value="">-- Select --</option>
+                    <option value="Email">Change Email</option>
+                    <option value="Address">Change Address</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="newEmailGroup" style="display: none;">
+                <label class="form-label">New Email *</label>
+                <input type="email" class="form-control" name="newEmail" id="newEmail" placeholder="Enter new email">
+            </div>
+
+            <div class="form-group" id="newAddressGroup" style="display: none;">
+                <label class="form-label">New Address *</label>
+                <textarea class="form-control" name="newAddress" id="newAddress" rows="2" placeholder="Enter new address"></textarea>
+            </div>
+
+            <div class="form-group" id="newCityGroup" style="display: none;">
+                <label class="form-label">City *</label>
+                <input type="text" class="form-control" name="newCity" id="newCity" placeholder="Enter city">
+            </div>
+
+            <button type="submit" class="btn btn-primary-gold">
+                <i class="fas fa-paper-plane"></i> Submit Request
+            </button>
+        </form>
+    </div>
+
+    <!-- Additional Info (Read-only) -->
+    <div class="form-card" style="margin-top: 2rem;">
+        <h4>Account Details</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="form-group">
+                <label class="form-label">CNIC</label>
+                <input type="text" class="form-control" value="@Model.CNIC" readonly disabled>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Date of Birth</label>
+                <input type="text" class="form-control" value="@(Model.DateOfBirth?.ToString("MMM dd, yyyy") ?? "-")" readonly disabled>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Account Status</label>
+                <div>
+                    @{
+                        var statusClass = Model.AccountStatus == "Active" ? "status-success"
+                            : Model.AccountStatus == "Locked" ? "status-failed"
+                            : "status-pending";
+                    }
+                    <span class="status-badge @statusClass">@Model.AccountStatus</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Member Since</label>
+                <input type="text" class="form-control" value="@(Model.CreatedDate?.ToString("MMM dd, yyyy") ?? "-")" readonly disabled>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password -->
+    <div class="form-card" style="margin-top: 2rem;">
+        <h4>Change Password</h4>
+        <form method="post" action="@Url.Action("ChangePassword","Users")">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label class="form-label">Current Password *</label>
+                <input type="password" class="form-control" name="currentPassword" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">New Password *</label>
+                <input type="password" class="form-control" name="newPassword" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Confirm Password *</label>
+                <input type="password" class="form-control" name="confirmPassword" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary-gold">
+                <i class="fas fa-lock"></i> Update Password
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleChangeFields(type) {
+        var emailGroup = document.getElementById('newEmailGroup');
+        var addressGroup = document.getElementById('newAddressGroup');
+        var cityGroup = document.getElementById('newCityGroup');
+        var newEmail = document.getElementById('newEmail');
+        var newAddress = document.getElementById('newAddress');
+        var newCity = document.getElementById('newCity');
+
+        emailGroup.style.display = 'none';
+        addressGroup.style.display = 'none';
+        cityGroup.style.display = 'none';
+        newEmail.required = false;
+        newAddress.required = false;
+        newCity.required = false;
+
+        if (type === 'Email') {
+            emailGroup.style.display = 'block';
+            newEmail.required = true;
+        } else if (type === 'Address') {
+            addressGroup.style.display = 'block';
+            cityGroup.style.display = 'block';
+            newAddress.required = true;
+            newCity.required = true;
+        }
+    }
+</script>

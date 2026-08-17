@@ -1,0 +1,78 @@
+﻿@model IEnumerable<OnlineBanking.Models.ServiceRequest>
+
+@{
+    ViewBag.Title = "Approvals";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="sidebar-space"></div>
+<div class="content">
+    <div class="dashboard-header">
+        <h2><i class="fas fa-check-circle"></i> Approvals</h2>
+        <p>Approved and rejected requests</p>
+    </div>
+
+    <div class="table-container">
+        <h3>Decision History</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Details</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    int rowNumber = 1;
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@rowNumber</td>
+                            <td>@(item.User1?.FirstName) @(item.User1?.LastName)</td>
+                            <td>@item.RequestType</td>
+                            <td>@(item.CreatedDate?.ToString("MMM dd") ?? "-")</td>
+                            <td>
+                                @switch (item.RequestType)
+                                {
+                                    case "Cheque Book":
+                                        @: @item.ChequeNumber leaves
+                                        break;
+                                    case "Stop Payment":
+                                        @: Cheque #@item.ChequeNumber
+                                        break;
+                                    case "Address Change":
+                                        @: @item.NewAddress, @item.NewCity
+                                        break;
+                                    case "Email Change":
+                                        @: @item.NewAddress
+                                        break;
+                                    default:
+                                        @: -
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    var statusClass = item.Status == "Approved" ? "status-success" : "status-failed";
+                                }
+                                <span class="status-badge @statusClass">@item.Status</span>
+                            </td>
+                        </tr>
+                        rowNumber++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center">No approved or rejected requests yet.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

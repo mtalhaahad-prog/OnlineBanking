@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<div class="auth-card" style="max-width: 720px;">
+    <div class="auth-header">
+        <h1><i class="fas fa-landmark"></i> VerdantVault</h1>
+        <p>Create your account</p>
+    </div>
+
+    @if (ViewBag.RegisterError != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> @ViewBag.RegisterError
+        </div>
+    }
+
+    <form method="post" action="@Url.Action("Register","Account")">
+        @Html.AntiForgeryToken()
+
+        <div style="display: grid; grid-template-columns: 2fr 2fr 2fr; gap: 2rem;">
+            <div class="form-group">
+                <label for="FirstName" class="form-label">First Name *</label>
+                <input type="text" class="form-control" id="FirstName" name="FirstName" placeholder="First name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="LastName" class="form-label">Last Name *</label>
+                <input type="text" class="form-control" id="LastName" name="LastName" placeholder="Last name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="Email" class="form-label">Email *</label>
+                <input type="email" class="form-control" id="Email" name="Email" placeholder="you@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="PhoneNumber" class="form-label">Phone Number *</label>
+                <input type="text" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="+92-300-1234567" required>
+            </div>
+
+            <div class="form-group">
+                <label for="CNIC" class="form-label">CNIC *</label>
+                <input type="text" class="form-control" id="CNIC" name="CNIC" placeholder="42101-1234567-1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="DateOfBirth" class="form-label">Date of Birth *</label>
+                <input type="date" class="form-control" id="DateOfBirth" name="DateOfBirth" required>
+            </div>
+
+            <div class="form-group" style="grid-column: span 1;">
+                <label for="Address" class="form-label">Address *</label>
+                <input type="text" class="form-control" id="Address" name="Address" placeholder="House / Street address" required>
+            </div>
+
+            <div class="form-group">
+                <label for="City" class="form-label">City *</label>
+                <input type="text" class="form-control" id="City" name="City" placeholder="City" required>
+            </div>
+
+            <div class="form-group">
+                <label for="PostalCode" class="form-label">Postal Code *</label>
+                <input type="text" class="form-control" id="PostalCode" name="PostalCode" placeholder="Postal code" required>
+            </div>
+
+            <div class="form-group">
+                <label for="Country" class="form-label">Country *</label>
+                <input type="text" class="form-control" id="Country" name="Country" value="Pakistan" required>
+            </div>
+
+            <div class="form-group">
+                <label for="PasswordHash" class="form-label">Password *</label>
+                <input type="password" class="form-control" id="PasswordHash" name="PasswordHash" placeholder="Create a password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword" class="form-label">Confirm Password *</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary-gold" style="width: 100%; margin-top: 1rem;">
+            <i class="fas fa-user-plus"></i> Create Account
+        </button>
+    </form>
+
+    <div class="auth-footer">
+        <p>Already have an account? <a href="@Url.Action("Login","Account")">Login here</a></p>
+    </div>
+</div>

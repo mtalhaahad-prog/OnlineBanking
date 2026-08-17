@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "Block Payment";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+
+    var myAccounts = ViewBag.MyAccounts as List<OnlineBanking.Models.BankAccount>;
+}
+
+<div class="sidebar-space"></div>
+
+<div class="content">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h2><i class="fas fa-ban"></i> Block Payment</h2>
+        <p>Stop or block payment of a cheque</p>
+    </div>
+
+    @if (TempData["StopPaymentSuccess"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> @TempData["StopPaymentSuccess"]
+        </div>
+    }
+    @if (TempData["StopPaymentError"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> @TempData["StopPaymentError"]
+        </div>
+    }
+
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i> This action cannot be undone. Please review carefully.
+    </div>
+
+    <div class="form-card">
+        <h4>Stop Payment Request</h4>
+        <form method="post" action="@Url.Action("StopPayment","Users")">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label class="form-label">Account *</label>
+                <select class="form-select" name="accountId" id="accountId" required onchange="loadAccountTransactions(this.value)">
+                    <option value="">-- Select --</option>
+                    @if (myAccounts != null)
+                    {
+                        foreach (var acc in myAccounts)
+                        {
+                            <option value="@acc.AccountID">@acc.AccountType (@acc.AccountNumber)</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Cheque Number *</label>
+                <input type="text" class="form-control" name="chequeNumber" placeholder="Enter cheque number" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Amount (PKR) *</label>
+                <input type="number" step="0.01" min="1" class="form-control" name="amount" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary-gold">
+                <i class="fas fa-check"></i> Submit Request
+            </button>
+        </form>
+    </div>
+
+    <!-- Recent Transactions of selected account -->
+    <div class="table-container" id="recentTxContainer" style="display: none;">
+        <h3>Recent Transactions</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>From</th>
+                    <th>From Account</th>
+                    <th>To</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="recentTxBody">
+            </tbody>
+        </table>
+        <div class="text-end mt-2">
+            <a href="@Url.Action("Transactions","Users")" class="btn btn-small btn-secondary-outline">View All Activity</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadAccountTransactions(accountId) {
+        var container = document.getElementById('recentTxContainer');
+        var body = document.getElementById('recentTxBody');
+
+        if (!accountId) {
+            container.style.display = 'none';
+            return;
+        }
+
+        fetch('@Url.Action("GetAccountTransactions", "Users")?accountId=' + accountId)
+            .then(response => response.json())
+            .then(data => {
+                body.innerHTML = '';
+
+                if (data.error || !data.transactions || data.transactions.length === 0) {
+                    body.innerHTML = '<tr><td colspan="8" class="text-center">No recent transactions found.</td></tr>';
+                } else {
+                    data.transactions.forEach(function (t) {
+                        var statusClass = t.status === 'Completed' ? 'status-success'
+                            : t.status === 'Failed' ? 'status-failed'
+                            : 'status-pending';
+
+                        var row = '<tr>' +
+                            '<td>' + t.date + '</td>' +
+                            '<td>' + t.fromName + '</td>' +
+                            '<td>' + t.fromAccount + '</td>' +
+                            '<td>' + t.toName + '</td>' +
+                            '<td>' + t.description + '</td>' +
+                            '<td>' + t.type + '</td>' +
+                            '<td>PKR ' + t.amount + '</td>' +
+                            '<td><span class="status-badge ' + statusClass + '">' + t.status + '</span></td>' +
+                            '</tr>';
+                        body.innerHTML += row;
+                    });
+                }
+
+                container.style.display = 'block';
+            });
+    }
+</script>

@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link rel="icon" type="image/png" href="@Url.Content("~/assets/Img/Bank-Icon.png")" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="~/assets/style.css">
+</head>
+<body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="navbar-brand">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <i class="fas fa-landmark"></i> VerdantVault
+        </div>
+        <div class="navbar-menu">
+            <a href="@Url.Action("Index","Users")" class="navbar-item" title="Dashboard">
+                <i class="fas fa-home"></i> <span class="text-light">Dashboard</span>
+            </a>
+            <a href="@Url.Action("Support","Users")" class="navbar-item" title="Support">
+                <i class="fas fa-headset"></i> <span class="text-light">Support</span>
+            </a>
+            <a href="@Url.Action("Profile","Users")" class="navbar-item" title="Profile">
+                <i class="fas fa-user-circle"></i> <span class="text-light">Profile</span>
+            </a>
+            <a href="@Url.Action("Logout","Account")" class="navbar-item" onclick="return confirm('Are you sure you want to logout?');" title="Logout">
+                <i class="fas fa-sign-out-alt"></i> <span class="text-light">Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="main-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-user"></i> @(ViewBag.CurrentUser != null ? ViewBag.CurrentUser.FirstName + " " + ViewBag.CurrentUser.LastName : "Guest")
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="@Url.Action("Index","Users")"><i class="fas fa-chart-line"></i> My Money</a></li>
+                <li><a href="@Url.Action("Accounts","Users")"><i class="fas fa-credit-card"></i> Bank Accounts</a></li>
+                <li><a href="@Url.Action("Transfer","Users")"><i class="fas fa-exchange-alt"></i> Send Funds</a></li>
+                <li><a href="@Url.Action("Transactions","Users")"><i class="fas fa-history"></i> Activity</a></li>
+                <li><a href="@Url.Action("Statements","Users")"><i class="fas fa-file-pdf"></i> My Statements</a></li>
+                <li><a href="@Url.Action("Cheque","Users")"><i class="fas fa-book"></i> Order Cheque</a></li>
+                
+                <li><a href="@Url.Action("StopPayment","Users")"><i class="fas fa-ban"></i> Block Payment</a></li>
+                <li><a href="@Url.Action("Profile","Users")"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="@Url.Action("Support","Users")"><i class="fas fa-headset"></i> Contact Us</a></li>
+                <li><a href="@Url.Action("Logout","Account")" onclick="return confirm('Are you sure you want to logout?');"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <!-- CONTENT RENDERED HERE -->
+        @RenderBody()
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>&copy; 2026 VerdantVault. All rights reserved.</p>
+        <p>Secure Online Banking System | www.verdantvault.com</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        sidebarToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        sidebar.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function () {
+                sidebar.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>

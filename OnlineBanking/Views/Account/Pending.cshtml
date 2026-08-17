@@ -1,0 +1,28 @@
+﻿@model OnlineBanking.Models.User
+
+@{
+    ViewBag.Title = "Account Pending";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<div class="auth-card">
+    <div class="auth-header">
+        <h1><i class="fas fa-hourglass-half"></i> VerdantVault</h1>
+        <p>Account Under Review</p>
+    </div>
+
+    <div class="alert alert-info" style="text-align: center;">
+        <i class="fas fa-clock" style="font-size: 2rem; display: block; margin-bottom: 1rem;"></i>
+        <p style="margin-bottom: 0.5rem;">
+            Hi <strong>@Model.FirstName</strong>, your account has been created successfully!
+        </p>
+        <p>
+            It is currently <strong>pending approval</strong> from our admin team.
+            You'll be able to log in once your account is activated.
+        </p>
+    </div>
+
+    <div class="auth-footer">
+        <p>Already approved? <a href="@Url.Action("Login","Account")">Try logging in again</a></p>
+    </div>
+</div>

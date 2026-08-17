@@ -1,0 +1,185 @@
+﻿@model IEnumerable<OnlineBanking.Controllers.StatementSummary>
+
+@{
+    ViewBag.Title = "My Statements";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+
+    var myAccounts = ViewBag.MyAccounts as List<OnlineBanking.Models.BankAccount>;
+}
+
+<div class="sidebar-space"></div>
+
+<div class="content">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h2><i class="fas fa-file-pdf"></i> My Statements</h2>
+        <p>Download and view your account statements</p>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        Select a date range and account to download your statement as PDF
+    </div>
+
+    <!-- Filters -->
+    <div class="form-card">
+        <h4>Generate Statement</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="selectAccount" class="form-label">Select Account</label>
+                <select class="form-select" id="selectAccount">
+                    <option value="">-- Select Account --</option>
+                    @if (myAccounts != null)
+                    {
+                        foreach (var acc in myAccounts)
+                        {
+                            <option value="@acc.AccountID">@acc.AccountType (@acc.AccountNumber)</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fromDate" class="form-label">From Date</label>
+                <input type="date" class="form-control" id="fromDate">
+            </div>
+            <div class="form-group">
+                <label for="toDate" class="form-label">To Date</label>
+                <input type="date" class="form-control" id="toDate">
+            </div>
+        </div>
+        <button class="btn btn-primary-gold" onclick="generateStatement()">
+            <i class="fas fa-download"></i> Download PDF
+        </button>
+    </div>
+
+    <!-- Previous Statements -->
+    <div class="table-container">
+        <h3>Previous Statements</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>Transactions</th>
+                    <th>Total Credit</th>
+                    <th>Total Debit</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var stmt in Model)
+                    {
+                        <tr>
+                            <td>@stmt.Period</td>
+                            <td>@stmt.TransactionCount</td>
+                            <td style="color: #34D399;">+ @stmt.TotalCredit.ToString("N0")</td>
+                            <td style="color: #DC2626;">- @stmt.TotalDebit.ToString("N0")</td>
+                            <td>
+                                <button class="btn btn-small btn-primary-gold"
+                                        onclick="downloadMonthlyStatement(@stmt.Year, @stmt.Month, '@stmt.Period')">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center">No statement history available.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    function buildAndDownloadPdf(data, periodLabel) {
+        if (data.error) {
+            alert('❌ ' + data.error);
+            return;
+        }
+
+        if (!data.transactions || data.transactions.length === 0) {
+            alert('No transactions found for this period.');
+            return;
+        }
+
+        var rows = data.transactions.map(function (t) {
+            return '<tr style="border-bottom: 1px solid #ddd;">' +
+                '<td style="padding: 8px;">' + t.date + '</td>' +
+                '<td style="padding: 8px;">' + t.description + '</td>' +
+                '<td style="padding: 8px;">' + t.type + '</td>' +
+                '<td style="padding: 8px;">PKR ' + t.amount + '</td>' +
+                '<td style="padding: 8px;">' + t.status + '</td>' +
+                '</tr>';
+        }).join('');
+
+        var element = document.createElement('div');
+        element.innerHTML =
+            '<div style="font-family: Arial, sans-serif; padding: 20px;">' +
+            '<div style="text-align: center; margin-bottom: 20px;">' +
+            '<h1 style="color: #047857;">VerdantVault</h1>' +
+            '<h2>Account Statement</h2>' +
+            '<p>Period: ' + periodLabel + '</p>' +
+            '</div>' +
+            '<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">' +
+            '<tr style="border-bottom: 1px solid #ddd;"><td style="padding: 8px; font-weight: bold;">Account Holder:</td><td style="padding: 8px;">' + data.accountHolder + '</td></tr>' +
+            '<tr style="border-bottom: 1px solid #ddd;"><td style="padding: 8px; font-weight: bold;">Account Number:</td><td style="padding: 8px;">' + data.accountNumber + '</td></tr>' +
+            '<tr style="border-bottom: 1px solid #ddd;"><td style="padding: 8px; font-weight: bold;">Account Type:</td><td style="padding: 8px;">' + data.accountType + '</td></tr>' +
+            '<tr><td style="padding: 8px; font-weight: bold;">Current Balance:</td><td style="padding: 8px;">PKR ' + data.currentBalance + '</td></tr>' +
+            '</table>' +
+            '<table style="width: 100%; border-collapse: collapse;">' +
+            '<thead><tr style="background:#e5f6ee;"><th style="padding: 8px; text-align:left;">Date</th><th style="padding: 8px; text-align:left;">Description</th><th style="padding: 8px; text-align:left;">Type</th><th style="padding: 8px; text-align:left;">Amount</th><th style="padding: 8px; text-align:left;">Status</th></tr></thead>' +
+            '<tbody>' + rows + '</tbody></table>' +
+            '<p style="text-align: center; color: #666; font-size: 0.9em; margin-top: 20px;">Generated on: ' + new Date().toLocaleString() + '</p>' +
+            '</div>';
+
+        var opt = {
+            margin: 10,
+            filename: 'VerdantVault_Statement_' + periodLabel.replace(/\s+/g, '_') + '.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+        };
+
+        html2pdf().set(opt).from(element).save();
+    }
+
+    function downloadMonthlyStatement(year, month, periodLabel) {
+        var accountId = document.getElementById('selectAccount').value;
+        if (!accountId) {
+            alert('❌ Please select an account first!');
+            return;
+        }
+
+        var fromDate = year + '-' + String(month).padStart(2, '0') + '-01';
+        var lastDay = new Date(year, month, 0).getDate();
+        var toDate = year + '-' + String(month).padStart(2, '0') + '-' + lastDay;
+
+        fetch('@Url.Action("GetStatementData", "Users")?accountId=' + accountId + '&fromDate=' + fromDate + '&toDate=' + toDate)
+            .then(response => response.json())
+            .then(data => buildAndDownloadPdf(data, periodLabel));
+    }
+
+    function generateStatement() {
+        var accountId = document.getElementById('selectAccount').value;
+        var fromDate = document.getElementById('fromDate').value;
+        var toDate = document.getElementById('toDate').value;
+
+        if (!accountId || !fromDate || !toDate) {
+            alert('❌ Please fill all fields!');
+            return;
+        }
+
+        var periodLabel = fromDate + ' to ' + toDate;
+
+        fetch('@Url.Action("GetStatementData", "Users")?accountId=' + accountId + '&fromDate=' + fromDate + '&toDate=' + toDate)
+            .then(response => response.json())
+            .then(data => buildAndDownloadPdf(data, periodLabel));
+    }
+</script>

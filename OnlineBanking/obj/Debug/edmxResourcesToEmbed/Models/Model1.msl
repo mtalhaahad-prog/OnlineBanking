@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="OnlineBankingDBModelStoreContainer" CdmEntityContainer="OnlineBankingDBEntities">
+    <EntitySetMapping Name="AuditLogs">
+      <EntityTypeMapping TypeName="OnlineBankingDBModel.AuditLog">
+        <MappingFragment StoreEntitySet="AuditLog">
+          <ScalarProperty Name="LogID" ColumnName="LogID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="Action" ColumnName="Action" />
+          <ScalarProperty Name="EntityType" ColumnName="EntityType" />
+          <ScalarProperty Name="EntityID" ColumnName="EntityID" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BankAccounts">
+      <EntityTypeMapping TypeName="OnlineBankingDBModel.BankAccount">
+        <MappingFragment StoreEntitySet="BankAccounts">
+          <ScalarProperty Name="AccountID" ColumnName="AccountID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="AccountNumber" ColumnName="AccountNumber" />
+          <ScalarProperty Name="IBAN" ColumnName="IBAN" />
+          <ScalarProperty Name="AccountType" ColumnName="AccountType" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="CurrentBalance" ColumnName="CurrentBalance" />
+          <ScalarProperty Name="AvailableBalance" ColumnName="AvailableBalance" />
+          <ScalarProperty Name="AccountStatus" ColumnName="AccountStatus" />
+          <ScalarProperty Name="OpenDate" ColumnName="OpenDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BankStatements">
+      <EntityTypeMapping TypeName="OnlineBankingDBModel.BankStatement">
+        <MappingFragment StoreEntitySet="BankStatements">
+          <ScalarProperty Name="StatementID" ColumnName="StatementID" />
+          <ScalarProperty Name="AccountID" ColumnName="AccountID" />
+          <ScalarProperty Name="StatementMonth" ColumnName="StatementMonth" />
+          <ScalarProperty Name="StatementYear" ColumnName="StatementYear" />
+          <ScalarProperty Name="OpeningBalance" ColumnName="OpeningBalance" />
+          <ScalarProperty Name="ClosingBalance" ColumnName="ClosingBalance" />
+          <ScalarProperty Name="TotalDeposits" ColumnName="TotalDeposits" />
+          <ScalarProperty Name="TransactionCount" ColumnName="TransactionCount" />
+          <ScalarProperty Name="GeneratedDate" ColumnName="GeneratedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Beneficiaries">
+      <EntityTypeMapping TypeName="OnlineBankingDBModel.Beneficiary">
+        <MappingFragment StoreEntitySet="Beneficiaries">
+          <ScalarProperty Name="BeneficiaryID" ColumnName="BeneficiaryID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="BeneficiaryName" ColumnName="BeneficiaryName" />
+          <ScalarProperty Name="BeneficiaryAccountNumber" ColumnName="BeneficiaryAccountNumber" />
+          <ScalarProperty Name="Relationship" ColumnName="Relationship" />
+          <ScalarProperty Name="IsFavorite" ColumnName="IsFavorite" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="LoginAttempts">
+      <EntityTypeMapping TypeName="OnlineBankingDBModel.LoginAttempt">
+        <MappingFragment StoreEntitySet="LoginAttempts">
+          <ScalarProperty Name="LoginAttemptID" ColumnName="LoginAttemptID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="AttemptStatus" ColumnName="AttemptStatus" />
+          <ScalarProperty Name="FailureReason" ColumnName="FailureReason" />
+          <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
+          <ScalarProperty Name="AttemptDate" ColumnName="AttemptDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ServiceRequests">
+      <EntityTypeMapping TypeName="OnlineBankingDBModel.ServiceRequest">
+        <MappingFragment StoreEntitySet="ServiceRequests">
+          <ScalarProperty Name="RequestID" ColumnName="RequestID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="AccountID" ColumnName="AccountID" />
+          <ScalarProperty Name="RequestType" ColumnName="RequestType" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Priority" ColumnName="Priority" />
+          <ScalarProperty Name="ChequeNumber" ColumnName="ChequeNumber" />
+          <ScalarProperty Name="ChequeAmount" ColumnName="ChequeAmount" />
+          <ScalarProperty Name="StopPaymentReason" ColumnName="StopPaymentReason" />
+          <ScalarProperty Name="NewAddress" ColumnName="NewAddress" />
+          <ScalarProperty Name="NewCity" ColumnName="NewCity" />
+          <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+          <ScalarProperty Name="ApprovedDate" ColumnName="ApprovedDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SupportTickets">
+      <EntityTypeMapping TypeName="OnlineBankingDBModel.SupportTicket">
+        <MappingFragment StoreEntitySet="SupportTickets">
+          <ScalarProperty Name="TicketID" ColumnName="TicketID" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="TicketNumber" ColumnName="TicketNumber" />
+          <ScalarProperty Name="Subject" ColumnName="Subject" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+          <ScalarProperty Name="Priority" ColumnName="Priority" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="AssignedTo" ColumnName="AssignedTo" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Transactions">
+      <EntityTypeMapping TypeName="OnlineBankingDBModel.Transaction">
+        <MappingFragment StoreEntitySet="Transactions">
+          <ScalarProperty Name="TransactionID" ColumnName="TransactionID" />
+          <ScalarProperty Name="FromAccountID" ColumnName="FromAccountID" />
+          <ScalarProperty Name="ToAccountID" ColumnName="ToAccountID" />
+          <ScalarProperty Name="TransactionType" ColumnName="TransactionType" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="TransactionStatus" ColumnName="TransactionStatus" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="OnlineBankingDBModel.User">
+        <MappingFragment StoreEntitySet="Users">
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+          <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="Country" ColumnName="Country" />
+          <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+          <ScalarProperty Name="CNIC" ColumnName="CNIC" />
+          <ScalarProperty Name="AccountStatus" ColumnName="AccountStatus" />
+          <ScalarProperty Name="UserType" ColumnName="UserType" />
+          <ScalarProperty Name="IsAccountLocked" ColumnName="IsAccountLocked" />
+          <ScalarProperty Name="LockUntil" ColumnName="LockUntil" />
+          <ScalarProperty Name="FailedLoginAttempts" ColumnName="FailedLoginAttempts" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+          <ScalarProperty Name="LastLoginDate" ColumnName="LastLoginDate" />
+          <ScalarProperty Name="IsEmailVerified" ColumnName="IsEmailVerified" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

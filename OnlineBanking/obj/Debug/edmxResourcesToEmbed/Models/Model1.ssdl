@@ -1,0 +1,356 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="OnlineBankingDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="AuditLog">
+    <Key>
+      <PropertyRef Name="LogID" />
+    </Key>
+    <Property Name="LogID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserID" Type="int" />
+    <Property Name="Action" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="EntityType" Type="nvarchar" MaxLength="100" />
+    <Property Name="EntityID" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="BankAccounts">
+    <Key>
+      <PropertyRef Name="AccountID" />
+    </Key>
+    <Property Name="AccountID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserID" Type="int" Nullable="false" />
+    <Property Name="AccountNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="IBAN" Type="nvarchar" MaxLength="50" />
+    <Property Name="AccountType" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Currency" Type="nvarchar" MaxLength="10" />
+    <Property Name="CurrentBalance" Type="decimal" Precision="15" Scale="2" Nullable="false" />
+    <Property Name="AvailableBalance" Type="decimal" Precision="15" Scale="2" Nullable="false" />
+    <Property Name="AccountStatus" Type="nvarchar" MaxLength="50" />
+    <Property Name="OpenDate" Type="datetime" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="UpdatedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="BankStatements">
+    <Key>
+      <PropertyRef Name="StatementID" />
+    </Key>
+    <Property Name="StatementID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="AccountID" Type="int" Nullable="false" />
+    <Property Name="StatementMonth" Type="int" Nullable="false" />
+    <Property Name="StatementYear" Type="int" Nullable="false" />
+    <Property Name="OpeningBalance" Type="decimal" Precision="15" Scale="2" />
+    <Property Name="ClosingBalance" Type="decimal" Precision="15" Scale="2" />
+    <Property Name="TotalDeposits" Type="decimal" Precision="15" Scale="2" />
+    <Property Name="TransactionCount" Type="int" />
+    <Property Name="GeneratedDate" Type="datetime" />
+    <Property Name="CreatedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Beneficiaries">
+    <Key>
+      <PropertyRef Name="BeneficiaryID" />
+    </Key>
+    <Property Name="BeneficiaryID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserID" Type="int" Nullable="false" />
+    <Property Name="BeneficiaryName" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="BeneficiaryAccountNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Relationship" Type="nvarchar" MaxLength="100" />
+    <Property Name="IsFavorite" Type="bit" />
+    <Property Name="CreatedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="LoginAttempts">
+    <Key>
+      <PropertyRef Name="LoginAttemptID" />
+    </Key>
+    <Property Name="LoginAttemptID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserID" Type="int" />
+    <Property Name="Email" Type="nvarchar" MaxLength="255" />
+    <Property Name="AttemptStatus" Type="nvarchar" MaxLength="50" />
+    <Property Name="FailureReason" Type="nvarchar" MaxLength="255" />
+    <Property Name="IPAddress" Type="nvarchar" MaxLength="50" />
+    <Property Name="AttemptDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="ServiceRequests">
+    <Key>
+      <PropertyRef Name="RequestID" />
+    </Key>
+    <Property Name="RequestID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserID" Type="int" Nullable="false" />
+    <Property Name="AccountID" Type="int" />
+    <Property Name="RequestType" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Status" Type="nvarchar" MaxLength="50" />
+    <Property Name="Priority" Type="nvarchar" MaxLength="50" />
+    <Property Name="ChequeNumber" Type="nvarchar" MaxLength="50" />
+    <Property Name="ChequeAmount" Type="decimal" Precision="15" Scale="2" />
+    <Property Name="StopPaymentReason" Type="nvarchar" MaxLength="500" />
+    <Property Name="NewAddress" Type="nvarchar" MaxLength="500" />
+    <Property Name="NewCity" Type="nvarchar" MaxLength="100" />
+    <Property Name="ApprovedBy" Type="int" />
+    <Property Name="ApprovedDate" Type="datetime" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="UpdatedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="SupportTickets">
+    <Key>
+      <PropertyRef Name="TicketID" />
+    </Key>
+    <Property Name="TicketID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserID" Type="int" Nullable="false" />
+    <Property Name="TicketNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Subject" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="Description" Type="nvarchar(max)" />
+    <Property Name="Category" Type="nvarchar" MaxLength="100" />
+    <Property Name="Priority" Type="nvarchar" MaxLength="50" />
+    <Property Name="Status" Type="nvarchar" MaxLength="50" />
+    <Property Name="AssignedTo" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="UpdatedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Transactions">
+    <Key>
+      <PropertyRef Name="TransactionID" />
+    </Key>
+    <Property Name="TransactionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FromAccountID" Type="int" />
+    <Property Name="ToAccountID" Type="int" />
+    <Property Name="TransactionType" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Amount" Type="decimal" Precision="15" Scale="2" Nullable="false" />
+    <Property Name="Currency" Type="nvarchar" MaxLength="10" />
+    <Property Name="TransactionStatus" Type="nvarchar" MaxLength="50" />
+    <Property Name="Description" Type="nvarchar" MaxLength="500" />
+    <Property Name="TransactionDate" Type="datetime" />
+    <Property Name="CreatedDate" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="UserID" />
+    </Key>
+    <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Email" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="FirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="LastName" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="PasswordHash" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="PhoneNumber" Type="nvarchar" MaxLength="20" />
+    <Property Name="Address" Type="nvarchar" MaxLength="500" />
+    <Property Name="City" Type="nvarchar" MaxLength="100" />
+    <Property Name="PostalCode" Type="nvarchar" MaxLength="20" />
+    <Property Name="Country" Type="nvarchar" MaxLength="100" />
+    <Property Name="DateOfBirth" Type="date" />
+    <Property Name="CNIC" Type="nvarchar" MaxLength="20" />
+    <Property Name="AccountStatus" Type="nvarchar" MaxLength="50" />
+    <Property Name="UserType" Type="nvarchar" MaxLength="50" />
+    <Property Name="IsAccountLocked" Type="bit" />
+    <Property Name="LockUntil" Type="datetime" />
+    <Property Name="FailedLoginAttempts" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
+    <Property Name="UpdatedDate" Type="datetime" />
+    <Property Name="LastLoginDate" Type="datetime" />
+    <Property Name="IsEmailVerified" Type="bit" />
+  </EntityType>
+  <Association Name="FK_AuditLog_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+    <End Role="AuditLog" Type="Self.AuditLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="UserID" />
+      </Principal>
+      <Dependent Role="AuditLog">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_BankAccounts_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="BankAccounts" Type="Self.BankAccounts" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="UserID" />
+      </Principal>
+      <Dependent Role="BankAccounts">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_BankStatements_Accounts">
+    <End Role="BankAccounts" Type="Self.BankAccounts" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="BankStatements" Type="Self.BankStatements" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BankAccounts">
+        <PropertyRef Name="AccountID" />
+      </Principal>
+      <Dependent Role="BankStatements">
+        <PropertyRef Name="AccountID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Beneficiaries_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Beneficiaries" Type="Self.Beneficiaries" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="UserID" />
+      </Principal>
+      <Dependent Role="Beneficiaries">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LoginAttempts_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+    <End Role="LoginAttempts" Type="Self.LoginAttempts" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="UserID" />
+      </Principal>
+      <Dependent Role="LoginAttempts">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ServiceRequests_Accounts">
+    <End Role="BankAccounts" Type="Self.BankAccounts" Multiplicity="0..1" />
+    <End Role="ServiceRequests" Type="Self.ServiceRequests" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BankAccounts">
+        <PropertyRef Name="AccountID" />
+      </Principal>
+      <Dependent Role="ServiceRequests">
+        <PropertyRef Name="AccountID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ServiceRequests_ApprovedBy">
+    <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+    <End Role="ServiceRequests" Type="Self.ServiceRequests" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="UserID" />
+      </Principal>
+      <Dependent Role="ServiceRequests">
+        <PropertyRef Name="ApprovedBy" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ServiceRequests_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="ServiceRequests" Type="Self.ServiceRequests" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="UserID" />
+      </Principal>
+      <Dependent Role="ServiceRequests">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SupportTickets_AssignedTo">
+    <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+    <End Role="SupportTickets" Type="Self.SupportTickets" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="UserID" />
+      </Principal>
+      <Dependent Role="SupportTickets">
+        <PropertyRef Name="AssignedTo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SupportTickets_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="1" />
+    <End Role="SupportTickets" Type="Self.SupportTickets" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="UserID" />
+      </Principal>
+      <Dependent Role="SupportTickets">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Transactions_FromAccount">
+    <End Role="BankAccounts" Type="Self.BankAccounts" Multiplicity="0..1" />
+    <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BankAccounts">
+        <PropertyRef Name="AccountID" />
+      </Principal>
+      <Dependent Role="Transactions">
+        <PropertyRef Name="FromAccountID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Transactions_ToAccount">
+    <End Role="BankAccounts" Type="Self.BankAccounts" Multiplicity="0..1" />
+    <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="BankAccounts">
+        <PropertyRef Name="AccountID" />
+      </Principal>
+      <Dependent Role="Transactions">
+        <PropertyRef Name="ToAccountID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="OnlineBankingDBModelStoreContainer">
+    <EntitySet Name="AuditLog" EntityType="Self.AuditLog" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="BankAccounts" EntityType="Self.BankAccounts" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="BankStatements" EntityType="Self.BankStatements" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Beneficiaries" EntityType="Self.Beneficiaries" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="LoginAttempts" EntityType="Self.LoginAttempts" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ServiceRequests" EntityType="Self.ServiceRequests" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="SupportTickets" EntityType="Self.SupportTickets" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Transactions" EntityType="Self.Transactions" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_AuditLog_Users" Association="Self.FK_AuditLog_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="AuditLog" EntitySet="AuditLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK_BankAccounts_Users" Association="Self.FK_BankAccounts_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="BankAccounts" EntitySet="BankAccounts" />
+    </AssociationSet>
+    <AssociationSet Name="FK_BankStatements_Accounts" Association="Self.FK_BankStatements_Accounts">
+      <End Role="BankAccounts" EntitySet="BankAccounts" />
+      <End Role="BankStatements" EntitySet="BankStatements" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Beneficiaries_Users" Association="Self.FK_Beneficiaries_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Beneficiaries" EntitySet="Beneficiaries" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LoginAttempts_Users" Association="Self.FK_LoginAttempts_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="LoginAttempts" EntitySet="LoginAttempts" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ServiceRequests_Accounts" Association="Self.FK_ServiceRequests_Accounts">
+      <End Role="BankAccounts" EntitySet="BankAccounts" />
+      <End Role="ServiceRequests" EntitySet="ServiceRequests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ServiceRequests_ApprovedBy" Association="Self.FK_ServiceRequests_ApprovedBy">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="ServiceRequests" EntitySet="ServiceRequests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ServiceRequests_Users" Association="Self.FK_ServiceRequests_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="ServiceRequests" EntitySet="ServiceRequests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SupportTickets_AssignedTo" Association="Self.FK_SupportTickets_AssignedTo">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="SupportTickets" EntitySet="SupportTickets" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SupportTickets_Users" Association="Self.FK_SupportTickets_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="SupportTickets" EntitySet="SupportTickets" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Transactions_FromAccount" Association="Self.FK_Transactions_FromAccount">
+      <End Role="BankAccounts" EntitySet="BankAccounts" />
+      <End Role="Transactions" EntitySet="Transactions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Transactions_ToAccount" Association="Self.FK_Transactions_ToAccount">
+      <End Role="BankAccounts" EntitySet="BankAccounts" />
+      <End Role="Transactions" EntitySet="Transactions" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

@@ -1,0 +1,142 @@
+﻿@model IEnumerable<OnlineBanking.Models.BankAccount>
+
+@{
+    ViewBag.Title = "Manage Bank Accounts";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="sidebar-space"></div>
+<div class="content">
+    <div class="dashboard-header">
+        <h2><i class="fas fa-credit-card"></i> Bank Accounts</h2>
+        <p>Manage all customer bank accounts</p>
+    </div>
+
+    <div class="table-container">
+        <h3>All Accounts</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Account Number</th>
+                    <th>Type</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    int rowNumber = 1;
+                    foreach (var acc in Model)
+                    {
+                        <tr>
+                            <td>@rowNumber</td>
+                            <td>@(acc.User?.FirstName) @(acc.User?.LastName)</td>
+                            <td>@acc.AccountNumber</td>
+                            <td>@acc.AccountType</td>
+                            <td>@acc.Currency @acc.CurrentBalance.ToString("N0")</td>
+                            <td>
+                                @{
+                                    var statusClass = acc.AccountStatus == "Active" ? "status-success"
+                                        : acc.AccountStatus == "Frozen" ? "status-failed"
+                                        : "status-pending";
+                                }
+                                <span class="status-badge @statusClass">@acc.AccountStatus</span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2" style="white-space: nowrap;">
+                                    <button class="btn btn-small btn-success" onclick="openAddMoney('@acc.AccountID','@acc.AccountNumber')">
+                                        Add Money
+                                    </button>
+
+                                    @if (acc.AccountStatus != "Frozen")
+                                    {
+                                        <button class="btn btn-small btn-danger"
+                                                onclick="updateAccountStatus('@acc.AccountID','Frozen')">
+                                            Freeze
+                                        </button>
+                                    }
+                                    @if (acc.AccountStatus != "Active")
+                                    {
+                                        <button class="btn btn-small btn-primary-gold"
+                                                onclick="updateAccountStatus('@acc.AccountID','Active')">
+                                            Activate
+                                        </button>
+                                    }
+                                    @if (acc.AccountStatus != "Inactive")
+                                    {
+                                        <button class="btn btn-small btn-secondary-outline"
+                                                onclick="updateAccountStatus('@acc.AccountID','Inactive')">
+                                            Deactivate
+                                        </button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                        rowNumber++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">No accounts found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Add Money modal -->
+        <div id="addMoneyModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;">
+            <div style="background:#fff; max-width:400px; margin:100px auto; padding:20px; border-radius:8px;">
+                <h3>Add Money</h3>
+                <p id="addMoneyAccountLabel" style="color: #6B7280;"></p>
+                <form id="addMoneyForm" method="post" action="@Url.Action("AddMoney","Admin")">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="addMoneyAccountId" />
+
+                    <label>Amount</label>
+                    <input type="number" step="0.01" min="1" name="amount" id="addMoneyAmount" class="form-control mb-3" placeholder="Enter amount" required />
+
+                    <button type="submit" class="btn btn-primary-gold mb-3">Deposit</button>
+                    <button type="button" class="btn btn-secondary mb-3" onclick="closeAddMoney()">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            function openAddMoney(accountId, accountNumber) {
+                document.getElementById('addMoneyAccountId').value = accountId;
+                document.getElementById('addMoneyAccountLabel').textContent = 'Account: ' + accountNumber;
+                document.getElementById('addMoneyAmount').value = '';
+                document.getElementById('addMoneyModal').style.display = 'block';
+            }
+
+            function closeAddMoney() {
+                document.getElementById('addMoneyModal').style.display = 'none';
+            }
+        </script>
+
+        <form id="accountStatusForm" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" id="accountStatusId" />
+            <input type="hidden" name="newStatus" id="accountNewStatus" />
+        </form>
+
+        <script>
+            function updateAccountStatus(id, status) {
+                if (confirm("Mark this account as " + status + "?")) {
+                    document.getElementById('accountStatusId').value = id;
+                    document.getElementById('accountNewStatus').value = status;
+                    var form = document.getElementById('accountStatusForm');
+                    form.action = '@Url.Action("UpdateAccountStatus", "Admin")';
+                    form.submit();
+                }
+            }
+
+
+        </script>
+    </div>
+</div>

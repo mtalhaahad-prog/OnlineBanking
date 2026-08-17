@@ -1,0 +1,177 @@
+﻿@{
+    ViewBag.Title = "My Money";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+
+    var currentUser = ViewBag.CurrentUser as OnlineBanking.Models.User;
+}
+
+<div class="sidebar-space"></div>
+
+<div class="content">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h2>Welcome Back, @(currentUser?.FirstName)! 👋</h2>
+        <p>Here's your financial overview</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+            <div class="stat-label">Total Accounts</div>
+            <div class="stat-value">@ViewBag.TotalAccounts</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-coins"></i></div>
+            <div class="stat-label">Total Balance</div>
+            <div class="stat-value">PKR @(((decimal)ViewBag.TotalBalance).ToString("N0"))</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-label">Pending Requests</div>
+            <div class="stat-value">@ViewBag.PendingRequestsCount</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-icon"><i class="fas fa-exchange-alt"></i></div>
+            <div class="stat-label">This Month Transactions</div>
+            <div class="stat-value">@ViewBag.ThisMonthTransactions</div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="table-container">
+        <h3>Quick Actions</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+            <button class="btn btn-primary-gold" onclick="window.location.href='@Url.Action("Transfer","Users")'">
+                <i class="fas fa-exchange-alt"></i> Send Funds
+            </button>
+            <button class="btn btn-primary-gold" onclick="window.location.href='@Url.Action("Cheque","Users")'">
+                <i class="fas fa-book"></i> Order Cheque
+            </button>
+            <button class="btn btn-primary-gold" onclick="window.location.href='@Url.Action("Statements","Users")'">
+                <i class="fas fa-file-pdf"></i> Statements
+            </button>
+            <button class="btn btn-primary-gold" onclick="window.location.href='@Url.Action("Support","Users")'">
+                <i class="fas fa-headset"></i> Support
+            </button>
+        </div>
+    </div>
+
+    <!-- My Accounts -->
+    <div class="table-container">
+        <h3>Bank Accounts</h3>
+
+        @if (ViewBag.Accounts != null && ViewBag.Accounts.Count > 0)
+        {
+            foreach (var acc in ViewBag.Accounts)
+            {
+                <div class="account-card">
+                    <div class="account-card-header">
+                        <div>
+                            <div class="account-card-type">@(acc.AccountType?.ToString().ToUpper())</div>
+                            <div class="account-card-number">@acc.AccountNumber</div>
+                        </div>
+                        <div>
+                            <i class="fas fa-credit-card" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                    <div class="account-card-footer">
+                        <div>
+                            <div class="account-card-holder">@(currentUser?.FirstName) @(currentUser?.LastName)</div>
+                        </div>
+                        <div>
+                            <div class="account-card-balance">PKR @(((decimal)acc.CurrentBalance).ToString("N0"))</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-center">No bank accounts found.</p>
+        }
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="table-container">
+        <h3>Recent Activity</h3>
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>From</th>
+                    <th>From Account</th>
+                    <th>To</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.RecentActivity != null && ViewBag.RecentActivity.Count > 0)
+                {
+                    foreach (var tx in ViewBag.RecentActivity)
+                    {
+                        bool isCredit = ViewBag.Accounts != null &&
+                                        System.Linq.Enumerable.Any(ViewBag.Accounts, (Func<dynamic, bool>)(a => a.AccountID == tx.ToAccountID));
+
+                        <tr>
+                            <td>@(tx.TransactionDate?.ToString("MMM dd, yyyy hh:mm tt") ?? "-")</td>
+                            <td>
+                                @if (tx.BankAccount?.User != null)
+                                {
+                                    @(tx.BankAccount.User.FirstName + " " + tx.BankAccount.User.LastName)
+                                }
+                                else
+                                {
+                                    @:Admin
+                                }
+                            </td>
+                            <td>@(tx.BankAccount?.AccountNumber ?? "-")</td>
+                            <td>
+                                @if (tx.BankAccount1?.User != null)
+                                {
+                                    @(tx.BankAccount1.User.FirstName + " " + tx.BankAccount1.User.LastName)
+                                }
+                                else
+                                {
+                                    @:-
+                                }
+                            </td>
+                            <td>@tx.Description</td>
+                            <td>
+                                @if (isCredit)
+                                {
+                                    <i class="fas fa-arrow-up" style="color: green;"></i>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-arrow-down" style="color: red;"></i>
+                                }
+                            </td>
+                            <td>PKR @(((decimal)tx.Amount).ToString("N0"))</td>
+                            <td>
+                                @{
+                                    var txClass = tx.TransactionStatus == "Completed" ? "status-success"
+                                        : tx.TransactionStatus == "Failed" ? "status-failed"
+                                        : "status-pending";
+                                }
+                                <span class="status-badge @txClass">@tx.TransactionStatus</span>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="8" class="text-center">No recent activity.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
